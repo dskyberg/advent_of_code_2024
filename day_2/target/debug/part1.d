@@ -1,0 +1,1 @@
+/Users/davidskyberg/Development/advent_of_code_2024/day_2/target/debug/part1: /Users/davidskyberg/Development/advent_of_code_2024/day_2/src/bin/part1.rs /Users/davidskyberg/Development/advent_of_code_2024/day_2/src/lib.rs
