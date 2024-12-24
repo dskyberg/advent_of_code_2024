@@ -1,6 +1,24 @@
 use std::fmt::Display;
 use std::ops::{Add, Sub};
 
+static NEIGHBORS_HV: [Point; 4] = [
+    Point { row: -1, col: 0 },
+    Point { row: 0, col: -1 },
+    Point { row: 0, col: 1 },
+    Point { row: 1, col: 0 },
+];
+
+static NEIGHBORS: [Point; 8] = [
+    Point { row: -1, col: -1 },
+    Point { row: -1, col: 0 },
+    Point { row: -1, col: 1 },
+    Point { row: 0, col: -1 },
+    Point { row: 0, col: 1 },
+    Point { row: 1, col: -1 },
+    Point { row: 1, col: 0 },
+    Point { row: 1, col: 1 },
+];
+
 #[derive(Debug, PartialEq, Clone, Copy, Hash, Eq, Default)]
 pub struct Point {
     pub row: isize,
@@ -39,12 +57,57 @@ impl Point {
     /// if `check_diag` then checks to see if they touch on the corners
     pub fn touches(&self, other: &Point, check_diag: bool) -> bool {
         let distance = self.distance(other);
+        if self == other {
+            return false;
+        }
         match check_diag {
             true => distance.row == 1 && distance.col == 1,
             false => {
                 distance.row == 0 && distance.col == 1 || distance.row == 1 && distance.col == 0
             }
         }
+    }
+
+    pub fn count_neighbors(&self, neighbors: &[Self]) -> usize {
+        neighbors
+            .iter()
+            .fold(0, |acc, p| match self.touches(p, false) {
+                true => acc + 1,
+                false => acc,
+            })
+    }
+
+    pub fn neighbors_hv(&self) -> Vec<Point> {
+        NEIGHBORS_HV.iter().map(|dir| *self + *dir).collect()
+    }
+
+    pub fn neighbors(&self) -> Vec<Point> {
+        NEIGHBORS.iter().map(|dir| *self + *dir).collect()
+    }
+
+    pub fn north(&self) -> Point {
+        *self + Self { row: -1, col: 0 }
+    }
+    pub fn east(&self) -> Point {
+        *self + Self { row: 0, col: 1 }
+    }
+    pub fn south(&self) -> Point {
+        *self + Self { row: 1, col: 0 }
+    }
+    pub fn west(&self) -> Point {
+        *self + Self { row: 0, col: -1 }
+    }
+    pub fn north_west(&self) -> Point {
+        *self + Self { row: -1, col: -1 }
+    }
+    pub fn north_east(&self) -> Point {
+        *self + Self { row: -1, col: 1 }
+    }
+    pub fn south_east(&self) -> Point {
+        *self + Self { row: 1, col: 1 }
+    }
+    pub fn south_west(&self) -> Point {
+        *self + Self { row: 1, col: -1 }
     }
 }
 
@@ -65,10 +128,20 @@ impl Display for Point {
 
 impl Add for Point {
     type Output = Self;
-    fn add(self, other: Self) -> Self {
+    fn add(self, rhs: Self) -> Self::Output {
         Self {
-            row: self.row + other.row,
-            col: self.col + other.col,
+            row: self.row + rhs.row,
+            col: self.col + rhs.col,
+        }
+    }
+}
+
+impl Add<&Point> for Point {
+    type Output = Self;
+    fn add(self, rhs: &Point) -> Point {
+        Self {
+            row: self.row + rhs.row,
+            col: self.col + rhs.col,
         }
     }
 }
@@ -80,5 +153,39 @@ impl Sub for Point {
             row: self.row - other.row,
             col: self.col - other.col,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_neighbors() {
+        let point = Point { row: 1, col: 1 };
+        let neighbors = vec![
+            Point::from((0, 0)), // -1,-1
+            Point::from((0, 1)), // -1,0
+            Point::from((0, 2)), // -1, +1
+            Point::from((1, 0)), // 0, -1
+            Point::from((1, 2)), // 0, +1
+            Point::from((2, 0)), // +1, -1
+            Point::from((2, 1)), // +1, 0
+            Point::from((2, 2)), // +1, +1
+        ];
+
+        assert_eq!(neighbors, point.neighbors());
+    }
+    #[test]
+    fn test_neighbors_hv() {
+        let point = Point { row: 1, col: 1 };
+        let neighbors = vec![
+            Point::from((0, 1)),
+            Point::from((1, 0)),
+            Point::from((1, 2)),
+            Point::from((2, 1)),
+        ];
+
+        assert_eq!(neighbors, point.neighbors_hv());
     }
 }

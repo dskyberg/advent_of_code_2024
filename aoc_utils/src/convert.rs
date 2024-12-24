@@ -72,6 +72,14 @@ pub fn data_to_ascii_bytes(data: &str) -> Vec<Vec<u8>> {
     data.lines().map(line_to_ascii_bytes).collect()
 }
 
+pub fn grid_line<T: std::convert::From<char>>(line: &str) -> Vec<T> {
+    line.chars().map(|c| T::from(c)).collect()
+}
+/// Convert data input into type T
+pub fn data_to_grid<T: std::convert::From<char>>(data: &str) -> Vec<Vec<T>> {
+    data.lines().map(grid_line).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
