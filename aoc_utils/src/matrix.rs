@@ -19,10 +19,10 @@ impl<T: Display + From<char>> Matrix<T> {
 
     #[inline]
     fn valid_point(&self, point: &Point) -> bool {
-        point.row >= 0
-            && point.row < self.height as isize
-            && point.col >= 0
-            && point.col < self.width as isize
+        point.y >= 0
+            && point.y < self.height as isize
+            && point.x >= 0
+            && point.x < self.width as isize
     }
 }
 
@@ -41,9 +41,9 @@ impl<T: From<char> + Display> From<&str> for Matrix<T> {
 
 impl<T: From<char> + Display> Display for Matrix<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for row in &self.grid {
-            for col in row {
-                write!(f, "{}", col)?;
+        for y in &self.grid {
+            for x in y {
+                write!(f, "{}", x)?;
             }
             writeln!(f)?;
         }

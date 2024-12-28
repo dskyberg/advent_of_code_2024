@@ -9,11 +9,11 @@ pub struct DAG(HashMap<u8, Vec<Point>>);
 impl From<&Vec<Vec<u8>>> for DAG {
     fn from(input: &Vec<Vec<u8>>) -> Self {
         let mut map = HashMap::new();
-        for (row, line) in input.iter().enumerate() {
-            for (col, &b) in line.iter().enumerate() {
+        for (y, line) in input.iter().enumerate() {
+            for (x, &b) in line.iter().enumerate() {
                 map.entry(b).or_insert_with(Vec::new).push(Point {
-                    row: row as isize,
-                    col: col as isize,
+                    y: y as isize,
+                    x: x as isize,
                 });
             }
         }
