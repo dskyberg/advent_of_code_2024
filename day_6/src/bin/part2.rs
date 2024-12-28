@@ -198,7 +198,7 @@ impl Map {
     fn is_a_loop(&mut self) -> bool {
         loop {
             let result = self.step();
-            if let Err(err) = result {
+            if result.is_err() {
                 return true;
             }
             if !result.unwrap() {

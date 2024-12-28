@@ -10,23 +10,23 @@ use aoc_utils::*;
 use day_13::*;
 
 fn parse_button(line: &str) -> (String, Point) {
-    let re = Regex::new(r"Button (?<button>[A-B]): X\+(?<col>\d+), Y\+(?<row>\d+)").unwrap();
+    let re = Regex::new(r"Button (?<button>[A-B]): X\+(?<x>\d+), Y\+(?<y>\d+)").unwrap();
     let caps = re
         .captures(line)
-        .expect(&format!("Failed to parse {}", line));
+        .unwrap_or_else(|| panic!("Failed to parse {}", line));
     let button = caps["button"].to_owned();
-    let col = caps["col"].parse::<isize>().unwrap();
-    let row = caps["row"].parse::<isize>().unwrap();
+    let x = caps["x"].parse::<isize>().unwrap();
+    let y = caps["y"].parse::<isize>().unwrap();
 
-    (button, Point { row, col })
+    (button, Point { y, x })
 }
 
 fn parse_prize(line: &str) -> Point {
-    let re = Regex::new(r"Prize: X=(?<col>\d+), Y=(?<row>\d+)").unwrap();
+    let re = Regex::new(r"Prize: X=(?<x>\d+), Y=(?<y>\d+)").unwrap();
     let caps = re.captures(line).unwrap();
-    let col = caps["col"].parse::<isize>().unwrap();
-    let row = caps["row"].parse::<isize>().unwrap();
-    Point { row, col }
+    let x = caps["x"].parse::<isize>().unwrap();
+    let y = caps["y"].parse::<isize>().unwrap();
+    Point { y, x }
 }
 
 #[derive(Debug)]
@@ -38,9 +38,9 @@ struct Machine {
 
 impl std::fmt::Display for Machine {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Button A: X+{}, Y+{}", self.a.col, self.a.row)?;
-        writeln!(f, "Button B: X+{}, Y+{}", self.b.col, self.b.row)?;
-        writeln!(f, "Prize: X={}, Y={}", self.prize.col, self.prize.row)
+        writeln!(f, "Button A: X+{}, Y+{}", self.a.x, self.a.y)?;
+        writeln!(f, "Button B: X+{}, Y+{}", self.b.x, self.b.y)?;
+        writeln!(f, "Prize: X={}, Y={}", self.prize.x, self.prize.y)
     }
 }
 
@@ -68,7 +68,7 @@ fn main() -> Result<()> {
             let result = dijkstra(
                 &start_node,
                 |pos| {
-                    if pos.col > machine.prize.col || pos.row > machine.prize.row {
+                    if pos.x > machine.prize.x || pos.y > machine.prize.y {
                         vec![]
                     } else {
                         vec![(*pos + machine.a, A_COST), (*pos + machine.b, B_COST)]

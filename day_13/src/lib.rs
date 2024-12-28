@@ -4,12 +4,12 @@ pub const A_COST: isize = 3;
 pub const B_COST: isize = 1;
 
 pub fn solve(a: Point, b: Point, prize: Point) -> Option<isize> {
-    let x1 = a.col;
-    let y1 = a.row;
-    let x2 = b.col;
-    let y2 = b.row;
-    let x3 = prize.col;
-    let y3 = prize.row;
+    let x1 = a.x;
+    let y1 = a.y;
+    let x2 = b.x;
+    let y2 = b.y;
+    let x3 = prize.x;
+    let y3 = prize.y;
 
     // Solve for b.
     let num = y1 * x3 - x1 * y3;
